@@ -1,0 +1,8 @@
+FROM rustembedded/cross:x86_64-unknown-linux-musl
+
+RUN apt-get update
+RUN apt-get install -y build-essential pkg-config musl-tools libx11-dev libfontconfig libfontconfig1-dev
+#build essentials
+#RUN yum install -y gcc gcc-c++ kernel-devel make
+#pkg-config libx11-dev
+#RUN yum install -y pkgconfig libx11-devel libXScrnSaver

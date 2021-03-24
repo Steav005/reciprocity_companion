@@ -1,0 +1,17 @@
+[package]
+name = "reciprocity_companion"
+version = "0.1.0"
+authors = ["Autumnal <friedrich122112@googlemail.com>"]
+edition = "2018"
+
+[dependencies]
+app_dirs2 = "^2"
+log = "^0"
+
+iced_core = "^0"
+iced_futures = "^0"
+iced = {version = "^0", features = ["tokio"]}
+
+tokio = {version = "^0", features = []}
+tungstenite = {version = "^0", default-features = false, features = ["rustls-tls"]}
+async-tungstenite = {version = "^0", default-features = false, features = ["tokio-rustls"] }

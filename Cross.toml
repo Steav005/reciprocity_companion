@@ -1,0 +1,11 @@
+[target.aarch64-unknown-linux-musl]
+image = "x12:aarch64-unknown-linux-musl"
+
+[target.armv7-unknown-linux-musleabihf]
+image = "x12:armv7-unknown-linux-musleabihf"
+
+[target.x86_64-unknown-linux-musl]
+image = "x12:x86_64-unknown-linux-musl"
+
+[target.i686-unknown-linux-musl]
+image = "x12:i686-unknown-linux-musl"
