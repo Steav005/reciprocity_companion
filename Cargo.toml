@@ -5,13 +5,25 @@ authors = ["Autumnal <friedrich122112@googlemail.com>"]
 edition = "2018"
 
 [dependencies]
-app_dirs2 = "^2"
+directories = "^3"
+cached = "^0"
 log = "^0"
+reqwest = {version = "^0", default-features = false, features = ["rustls-tls"]}
+serde = { version = "^1", features = ["derive"] }
+serde_json = "^1"
+serde_yaml = "^0"
+futures = "^0"
+rmp-serde = "^0"
 
 iced_core = "^0"
+iced_style = "^0"
 iced_futures = "^0"
-iced = {version = "^0", features = ["tokio"]}
+iced_graphics = "^0"
+iced = {version = "^0", features = ["tokio", "wgpu", "default_system_font", "canvas", "image", "svg", "debug"], default_features = false}
 
-tokio = {version = "^0", features = []}
+tokio = {version = "^1", features = ["rt-multi-thread", "time", "sync", "net"]}
 tungstenite = {version = "^0", default-features = false, features = ["rustls-tls"]}
 async-tungstenite = {version = "^0", default-features = false, features = ["tokio-rustls"] }
+
+#reciprocity_communication = {path = "../reciprocity_communication", features = ["client"]}
+reciprocity_communication = {git = "https://github.com/Steav005/reciprocity_communication", branch = "master", features = ["client"]}
