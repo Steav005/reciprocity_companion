@@ -113,6 +113,7 @@ pub struct ControlsContainer;
 impl container::StyleSheet for ControlsContainer {
     fn style(&self) -> container::Style {
         container::Style {
+            text_color: TEXT.into(),
             background: SURFACE_2.into(),
             ..Default::default()
         }
@@ -124,7 +125,20 @@ pub struct FooterContainer;
 impl container::StyleSheet for FooterContainer {
     fn style(&self) -> container::Style {
         container::Style {
+            text_color: TEXT.into(),
             background: SURFACE_3.into(),
+            ..Default::default()
+        }
+    }
+}
+
+pub struct TooltipContainer;
+
+impl container::StyleSheet for TooltipContainer {
+    fn style(&self) -> container::Style {
+        container::Style {
+            background: HOVERED.into(),
+            border_radius: 10.0,
             ..Default::default()
         }
     }
@@ -146,6 +160,7 @@ pub struct TabViewContainer;
 impl container::StyleSheet for TabViewContainer {
     fn style(&self) -> container::Style {
         container::Style {
+            text_color: TEXT.into(),
             background: SURFACE.into(),
             ..Default::default()
         }

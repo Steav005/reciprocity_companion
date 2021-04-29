@@ -133,6 +133,18 @@ impl container::StyleSheet for FooterContainer {
     }
 }
 
+pub struct TooltipContainer;
+
+impl container::StyleSheet for TooltipContainer {
+    fn style(&self) -> container::Style {
+        container::Style {
+            background: HOVERED.into(),
+            border_radius: 10.0,
+            ..Default::default()
+        }
+    }
+}
+
 pub struct TabsContainer;
 
 impl container::StyleSheet for TabsContainer {

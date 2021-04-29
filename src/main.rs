@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use directories::ProjectDirs;
 use iced::{Application, Settings};
 use reciprocity_companion::config::Config;
@@ -46,8 +48,9 @@ fn main() -> iced::Result {
             icon: None,
         },
         flags: (config, config_path),
-        default_font: None,
+        default_font: Some(include_bytes!("./fonts/NotoSansSC-Medium.otf")),
         default_text_size: 22,
-        antialiasing: false,
+        exit_on_close_request: true,
+        antialiasing: true,
     })
 }

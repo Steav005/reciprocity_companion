@@ -7,10 +7,13 @@ use crate::util::{get_image, get_image_uri_from_yt_id};
 use crate::{Message, MAX_DOUBLE_CLICK_INTERVAL};
 use iced::{
     Button, Column, Command, Element, Image, Length, Row, Scrollable, Space, Text, TextInput,
+    Tooltip,
 };
 use reciprocity_communication::messages::PlayerControl;
 use reqwest::Url;
-use std::time::Instant;
+use std::time::{Duration, Instant};
+
+const TOOLTIP_DURATION: Duration = Duration::from_secs(2);
 
 #[derive(Debug, Clone)]
 pub enum SearchMessage {
@@ -19,6 +22,7 @@ pub enum SearchMessage {
     SearchResult(String, Vec<Video>),
     InputChanged(String),
     InputSubmit(),
+    UpdateUi(),
 }
 
 #[derive(Debug)]
@@ -26,6 +30,8 @@ pub struct SearchTab {
     scroll: iced::scrollable::State,
     search_input: iced::text_input::State,
     search_input_value: String,
+
+    tooltip: (String, Instant),
 
     search: String,
     results: Vec<(Option<iced::image::Handle>, Video)>,
@@ -41,6 +47,7 @@ impl SearchTab {
             scroll: Default::default(),
             search_input: Default::default(),
             search_input_value: "".to_string(),
+            tooltip: ("".to_string(), Instant::now()),
             search: "".to_string(),
             results: Vec::new(),
             last_click: (0, Instant::now()),
@@ -101,11 +108,26 @@ impl SearchTab {
                     if let Some(con) = con {
                         if let Some((_, song)) = self.results.get(i - 1) {
                             let url = Url::parse(&song.url).expect("Error Parsing Url");
-                            return con.control_request(PlayerControl::Enqueue(url));
+                            self.tooltip = (song.title.clone(), Instant::now());
+                            return Command::batch(vec![
+                                con.control_request(PlayerControl::Enqueue(url)),
+                                Command::perform(
+                                    async {
+                                        tokio::time::sleep(
+                                            TOOLTIP_DURATION + Duration::from_millis(200),
+                                        )
+                                        .await
+                                    },
+                                    |_| Message::Search(SearchMessage::UpdateUi()),
+                                ),
+                            ]);
                         }
                     }
                 }
                 self.last_click = (i, Instant::now());
+            }
+            SearchMessage::UpdateUi() => {
+                //Ignore
             }
         }
 
@@ -182,6 +204,17 @@ impl Tab for SearchTab {
             .push(results_column)
             .height(Length::Fill);
 
-        column.push(res_scroll).into()
+        let mut view = column.push(res_scroll).into();
+        if self.tooltip.1.elapsed() < TOOLTIP_DURATION && !self.tooltip.0.is_empty() {
+            view = Tooltip::new(
+                view,
+                format!("Added: {}", self.tooltip.0),
+                iced::tooltip::Position::Top,
+            )
+            .style(theme.tooltip_container_theme())
+            .gap(10)
+            .into()
+        }
+        view
     }
 }

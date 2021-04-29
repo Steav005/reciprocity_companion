@@ -13,6 +13,13 @@ pub enum Theme {
 impl Theme {
     pub const ALL: [Theme; 2] = [Theme::Light, Theme::Dark];
 
+    pub fn tooltip_container_theme(&self) -> Box<dyn container::StyleSheet> {
+        match self {
+            Theme::Light => light::TooltipContainer.into(),
+            Theme::Dark => dark::TooltipContainer.into(),
+        }
+    }
+
     pub fn radio_button_theme(&self) -> Box<dyn radio::StyleSheet> {
         match self {
             Theme::Light => light::RadioButton.into(),

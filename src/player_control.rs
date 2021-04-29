@@ -287,7 +287,9 @@ impl PlayerControl {
                     .align_x(Align::Start),
             )
             .align_items(Align::Center);
-        (song_picture.into(), Container::new(row).padding(5).into())
+        let control_element = Container::new(row).padding(5);
+
+        (song_picture.into(), control_element.into())
     }
 }
 

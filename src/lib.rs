@@ -4,7 +4,7 @@ pub mod config;
 mod connection;
 mod executor;
 mod footer;
-mod icons;
+pub mod icons;
 mod player_control;
 mod states;
 mod tabs;
@@ -21,7 +21,7 @@ use crate::tabs::search::{SearchMessage, SearchTab};
 use crate::tabs::settings::{SettingsMessage, SettingsTab};
 use crate::tabs::{Tab, Tabs};
 use crate::theme::Theme;
-use iced::{Application, Column, Command, Container, Element, Length, Row};
+use iced::{Application, Clipboard, Column, Command, Container, Element, Length, Row};
 use reciprocity_communication::client::{get_auth_code, OAuthError};
 use reciprocity_communication::messages::oauth2::{AuthorizationCode, RefreshToken};
 use reciprocity_communication::messages::{Auth, User};
@@ -75,12 +75,18 @@ impl Application for Companion {
     type Flags = (Config, PathBuf);
 
     fn new((cfg, config_path): (Config, PathBuf)) -> (Self, Command<Self::Message>) {
+        println!(
+            "Config refresh token: {:?}",
+            cfg.refresh_token.as_ref().map(|t| t.secret().clone())
+        );
         let command = if let Some(token) = cfg.refresh_token.as_ref() {
+            println!("Performing Connect with Refresh Token");
             Command::perform(
                 Connection::new(Auth::Token(token.clone()), cfg.bot_link.clone()),
                 Message::GotConnection,
             )
         } else {
+            println!("Getting New Auth Code: Main");
             Command::perform(get_auth_code(cfg.com.clone()), Message::GotAuth)
         };
 
@@ -107,7 +113,7 @@ impl Application for Companion {
         "Reciprocity Companion".to_string()
     }
 
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+    fn update(&mut self, message: Self::Message, _c: &mut Clipboard) -> Command<Self::Message> {
         match message {
             Message::None() => Command::none(),
             Message::GotAuth(res) => match res {
@@ -203,11 +209,13 @@ impl Application for Companion {
                     }
                     Err(e) => {
                         match e {
-                            ConnectionError::NonAuthMessage(_) => {
+                            ConnectionError::NonAuthMessage(e) => {
+                                println!("Auth Error {:?}", e);
                                 //Clear Token in Config
                                 self.cfg.refresh_token = None;
                                 self.cfg.update(self.cfg_path.clone());
                                 //Attempt getting new Token
+                                println!("Getting New Auth Code: Got Connection");
                                 Command::perform(
                                     get_auth_code(self.cfg.com.clone()),
                                     Message::GotAuth,

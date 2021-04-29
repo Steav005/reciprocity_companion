@@ -1,8 +1,12 @@
 Fehler
-- [ ] Hiragana Katakana werden nicht korrekt angezeigt. -> Font ändern
+- [x] Hiragana Katakana werden nicht korrekt angezeigt. -> Font ändern
+- [ ] Control ist unnütz, wenn Stream abgespielt wird
 
 TODOS
-- [ ] Hinweis, dass Lied hinzugefügt wurde
+- [x] Hinweis, dass Lied hinzugefügt wurde
+- [ ] Weitere Hinweise?
 - [ ] Settings implementieren
-- [ ] Fehlerbehandlung
+- [ ] Fehlerbehandlung / Meldung
 - [ ] Icon basteln
+- [ ] Playlist erstellen können und lokal speichern (import/export)
+- [ ] Bot Status anzeigen + Join/Leave Button
