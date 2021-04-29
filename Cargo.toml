@@ -21,7 +21,7 @@ iced_futures = "^0.3"
 iced_graphics = "^0.2"
 iced_native = "^0.4"
 iced_wgpu = "^0.4"
-iced = {version = "^0.3", features = ["tokio", "wgpu", "default_system_font", "canvas", "image", "svg", "debug"], default_features = false}
+iced = {version = "^0.3", features = ["tokio", "wgpu", "canvas", "image", "svg"], default_features = false}
 
 tokio = {version = "^1.5", features = ["rt-multi-thread", "time", "sync", "net"]}
 tungstenite = {version = "^0.13", default-features = false, features = ["rustls-tls"]}
