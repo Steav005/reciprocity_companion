@@ -1,4 +1,4 @@
 FROM rustembedded/cross:aarch64-unknown-linux-musl
 
 RUN apt-get update
-RUN apt-get install -y build-essential pkg-config libx11-dev musl-tools libfontconfig libfontconfig1-dev fontconfig libfreetype6 expat libc6-dev
+RUN apt-get install -y build-essential pkg-config libx11-dev musl-tools libfontconfig libfontconfig1-dev fontconfig libfreetype6 expat libc6-dev libstdc++6 gcc-multilib
