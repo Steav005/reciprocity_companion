@@ -1,12 +1,8 @@
 [target.aarch64-unknown-linux-musl]
 image = "x12:aarch64-unknown-linux-musl"
-linker = "aarch64-linux-gnu-gcc"
-rustflags = [ "-C", "target-feature=+crt-static", "-C", "link-arg=-lgcc" ]
 
 [target.armv7-unknown-linux-musleabihf]
 image = "x12:armv7-unknown-linux-musleabihf"
-linker = "armv7-linux-gnu-gcc"
-rustflags = [ "-C", "target-feature=+crt-static", "-C", "link-arg=-lgcc" ]
 
 [target.x86_64-unknown-linux-musl]
 image = "x12:x86_64-unknown-linux-musl"
