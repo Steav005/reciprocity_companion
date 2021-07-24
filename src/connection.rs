@@ -21,7 +21,7 @@ pub enum ConnectionError {
     Tungstenite(Arc<tungstenite::Error>),
     RmpSerdeEncode(Arc<rmp_serde::encode::Error>),
     RmpSerdeDecode(Arc<rmp_serde::decode::Error>),
-    NonAuthMessage(Message),
+    NonAuthMessage(Box<Message>),
 }
 
 impl From<tungstenite::Error> for ConnectionError {
@@ -44,7 +44,7 @@ impl From<rmp_serde::decode::Error> for ConnectionError {
 
 impl From<Message> for ConnectionError {
     fn from(m: Message) -> Self {
-        ConnectionError::NonAuthMessage(m)
+        ConnectionError::NonAuthMessage(Box::new(m))
     }
 }
 
@@ -103,7 +103,7 @@ impl Connection {
         req: reciprocity_communication::messages::PlayerControl,
     ) -> Command<crate::Message> {
         println!("Request: {:?}", req);
-        Command::perform(self.clone().send(ClientRequest::Control(req)), |res| {
+        Command::perform(self.clone().send(ClientRequest::Control(uuid::Uuid::new_v4().to_string(), req)), |res| {
             if let Err(e) = res {
                 panic!("Error sending request. {:?}", e)
             }

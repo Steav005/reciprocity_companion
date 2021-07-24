@@ -10,6 +10,7 @@ mod states;
 mod tabs;
 mod theme;
 pub mod util;
+mod log;
 
 use crate::config::Config;
 use crate::connection::{Connection, ConnectionError};
@@ -24,11 +25,12 @@ use crate::theme::Theme;
 use iced::{Application, Clipboard, Column, Command, Container, Element, Length, Row};
 use reciprocity_communication::client::{get_auth_code, OAuthError};
 use reciprocity_communication::messages::oauth2::{AuthorizationCode, RefreshToken};
-use reciprocity_communication::messages::{Auth, User};
+use reciprocity_communication::messages::{Auth, User, PlayerControlResult};
 use reciprocity_communication::messages::{Message as ComMessage, PlayerState, State};
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::time::Duration;
+use crate::log::LogMessage;
 
 pub const MAX_DOUBLE_CLICK_INTERVAL: Duration = Duration::from_millis(300);
 
@@ -58,6 +60,9 @@ pub struct Companion {
     theme: theme::Theme,
     connection: Option<Connection>,
     player_state: Option<PlayerState>,
+
+    app_log: Vec<LogMessage>,
+    control_log: Vec<PlayerControlResult>,
 
     player_control: PlayerControl,
     footer: PlayerFooter,
@@ -97,6 +102,8 @@ impl Application for Companion {
                 theme: cfg.theme,
                 connection: None,
                 player_state: None,
+                app_log: Vec::default(),
+                control_log: Vec::default(),
                 player_control: PlayerControl::new(),
                 footer: PlayerFooter::new(),
                 tabs: Tabs::new(0, Message::TabSelected),

@@ -164,7 +164,7 @@ impl Tab for SearchTab {
         .style(theme.search_input_theme());
         column = column.push(search_input);
 
-        let mut results_column = Column::new().height(Length::Fill);
+        let mut results_column = Scrollable::new(&mut self.scroll).height(Length::Fill).width(Length::Fill);
         for (i, ((img, video), btn_state)) in self
             .results
             .iter()
@@ -196,15 +196,16 @@ impl Tab for SearchTab {
 
             let btn = Button::new(btn_state, row)
                 .on_press(Message::Search(SearchMessage::SearchClick(i)))
-                .style(theme.tab_button_theme());
+                .style(theme.tab_button_theme())
+                .width(Length::Fill);
+            let btn_row = Row::new()
+                .push(btn)
+                .push(Space::new(Length::Units(10), Length::Shrink));
 
-            results_column = results_column.push(btn);
+            results_column = results_column.push(btn_row);
         }
-        let res_scroll = Scrollable::new(&mut self.scroll)
-            .push(results_column)
-            .height(Length::Fill);
 
-        let mut view = column.push(res_scroll).into();
+        let mut view = column.push(results_column).into();
         if self.tooltip.1.elapsed() < TOOLTIP_DURATION && !self.tooltip.0.is_empty() {
             view = Tooltip::new(
                 view,

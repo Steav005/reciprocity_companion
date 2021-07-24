@@ -9,18 +9,19 @@ use iced::{
 };
 use reciprocity_communication::messages::{PlayerControl, PlayerState, Track};
 use std::time::Instant;
+use reqwest::Url;
 
 #[derive(Debug, Clone)]
 pub enum HistoryMessage {
     PlayerStateChanged(Option<PlayerState>),
-    SongClicked(usize),
+    SongClicked(Track),
 }
 
 #[derive(Debug)]
 pub struct HistoryTab {
     history: Vec<Track>,
     scroll: iced::scrollable::State,
-    last_click: (usize, Instant),
+    last_click: (Track, Instant),
     btn_states: Vec<iced::button::State>,
 }
 
@@ -30,7 +31,12 @@ impl HistoryTab {
         HistoryTab {
             history: Vec::new(),
             scroll: Default::default(),
-            last_click: (0, Instant::now()),
+            last_click: (Track{
+                len: Default::default(),
+                pos: Default::default(),
+                title: "".to_string(),
+                uri: "".to_string()
+            }, Instant::now()),
             btn_states: Vec::new(),
         }
     }
@@ -44,16 +50,17 @@ impl HistoryTab {
             HistoryMessage::PlayerStateChanged(state) => {
                 self.history = state.map(|s| s.history).unwrap_or_default();
             }
-            HistoryMessage::SongClicked(i) => {
-                if self.last_click.0 == i
+            HistoryMessage::SongClicked(track) => {
+                if self.last_click.0.eq(&track)
                     && self.last_click.1.elapsed() <= MAX_DOUBLE_CLICK_INTERVAL
                 {
-                    self.last_click = (0, Instant::now());
+                    self.last_click = (track, Instant::now());
                     if let Some(con) = con {
-                        return con.control_request(PlayerControl::BackSkip(i));
+                        return con.control_request(PlayerControl::Enqueue(Url::parse(self.last_click.0.uri.as_str()).unwrap()));
                     }
+                } else {
+                    self.last_click = (track, Instant::now());
                 }
-                self.last_click = (i, Instant::now());
             }
         }
 
@@ -99,7 +106,7 @@ impl Tab for HistoryTab {
                 .push(Space::new(Length::Units(15), Length::Shrink))
                 .width(Length::Fill);
             let btn = Button::new(btn_state, row)
-                .on_press(Message::History(HistoryMessage::SongClicked(i)))
+                .on_press(Message::History(HistoryMessage::SongClicked(track.clone())))
                 .style(theme.tab_button_theme());
 
             column = column.push(btn);
